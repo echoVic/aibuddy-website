@@ -1,0 +1,63 @@
+{
+  "nav": {
+    "pricing": "定价",
+    "dashboard": "控制台",
+    "getStarted": "开始使用"
+  },
+  "hero": {
+    "badge": "从 $1 开始你的 AI 之旅",
+    "title": "AI Buddy",
+    "description": "实战 AI 教程、开箱即用的 Agent 配置、OpenClaw 工作流模板。不废话，直接上手用。",
+    "browseProducts": "浏览产品",
+    "viewPricing": "查看定价"
+  },
+  "products": {
+    "title": "选择适合你的产品",
+    "subtitle": "从入门到精通，每一步都有对应的产品",
+    "starter": {
+      "title": "入门版",
+      "price": "$1",
+      "features": [
+        "OpenClaw Quick Start PDF",
+        "10个实用场景",
+        "源码示例",
+        "低门槛体验"
+      ]
+    },
+    "guides": {
+      "title": "实战小册",
+      "price": "$29 - $79",
+      "features": [
+        "《OpenClaw 完整指南》",
+        "MCP 开发完全指南",
+        "20+ 实战案例",
+        "私有 Discord 社群"
+      ]
+    },
+    "consultation": {
+      "title": "1v1 服务",
+      "price": "$299起",
+      "features": [
+        "环境搭建咨询",
+        "工作流定制设计",
+        "代码 Review",
+        "企业内训（远程）"
+      ]
+    }
+  },
+  "trust": {
+    "lifetimeUpdates": "终身更新",
+    "communitySupport": "Discord 社群支持",
+    "instantAccess": "即买即用"
+  },
+  "cta": {
+    "title": "Ready to level up?",
+    "description": "从 $1 开始，逐步解锁 AI 超能力。",
+    "button": "查看定价"
+  },
+  "footer": {
+    "copyright": "© 2025 AI Buddy. 专注 AI 实战。",
+    "pricing": "定价",
+    "github": "GitHub"
+  }
+}

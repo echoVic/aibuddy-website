@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Zap, BookOpen, Wrench, Users, Sparkles, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
               Dashboard
             </Link>
             <ThemeToggle />
+            <LanguageSwitcher />
             <Link href="/pricing">
               <Button size="sm">Get Started</Button>
             </Link>
