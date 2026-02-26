@@ -2,7 +2,7 @@ import { products } from '@/lib/products';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Zap, BookOpen, Wrench, Users } from 'lucide-react';
+import { Check, BookOpen, Wrench, Users } from 'lucide-react';
 import Link from 'next/link';
 
 const iconMap = {
@@ -15,13 +15,27 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
+      <header className="border-b">
+        <div className="mx-auto max-w-6xl px-6 py-4 flex justify-between items-center">
+          <Link href="/" className="text-xl font-bold">AI Buddy</Link>
+          <nav className="flex gap-6 items-center">
+            <Link href="/pricing" className="text-sm text-foreground font-medium">Pricing</Link>
+            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">Dashboard</Link>
+            <Link href="/pricing">
+              <Button size="sm">Get Started</Button>
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* Hero */}
       <section className="px-6 py-12 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">
             Simple, transparent pricing
           </h1>
           <p className="text-lg text-muted-foreground">
-            从免费开始，按需升级
+            从 $1 开始，按需升级
           </p>
         </div>
       </section>
@@ -31,7 +45,6 @@ export default function PricingPage() {
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => {
             const Icon = iconMap[product.type];
-            const isFree = product.price === 0;
             const isPopular = product.id === 'agent-config-pack';
             
             return (
@@ -46,10 +59,8 @@ export default function PricingPage() {
                   <CardTitle>{product.name}</CardTitle>
                   <CardDescription>{product.description}</CardDescription>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">
-                      {isFree ? 'Free' : `$${product.price}`}
-                    </span>
-                    {!isFree && <span className="text-muted-foreground">/one-time</span>}
+                    <span className="text-4xl font-bold">${product.price}</span>
+                    <span className="text-muted-foreground">/one-time</span>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -63,13 +74,7 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  {isFree ? (
-                    <Link href="/guides/openclaw-quickstart" className="w-full">
-                      <Button variant="outline" className="w-full">
-                        Download Free
-                      </Button>
-                    </Link>
-                  ) : product.type === 'consultation' ? (
+                  {product.type === 'consultation' ? (
                     <Link href="https://calendly.com/aibuddy/consultation" className="w-full">
                       <Button className="w-full">Book Now</Button>
                     </Link>
