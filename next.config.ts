@@ -3,10 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'export',
   distDir: 'dist',
-  i18n: {
-    locales: ['en', 'zh'],
-    defaultLocale: 'zh',
-  },
+  // i18n config removed - using client-side switching instead
 };
 
 export default nextConfig;
