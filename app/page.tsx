@@ -100,7 +100,7 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-yellow-500" />
                 </div>
-                <CardTitle className="text-2xl">引流款</CardTitle>
+                <CardTitle className="text-2xl">入门版</CardTitle>
                 <CardDescription className="text-lg font-semibold text-primary">$1</CardDescription>
               </CardHeader>
               <CardContent className="relative">
