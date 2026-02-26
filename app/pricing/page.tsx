@@ -98,12 +98,6 @@ export default function PricingPage() {
           <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold mb-1">退款政策？</h3>
-              <p className="text-muted-foreground text-sm">
-                所有付费产品支持 30 天无理由退款。联系我们即可处理。
-              </p>
-            </div>
-            <div>
               <h3 className="font-semibold mb-1">配置包如何交付？</h3>
               <p className="text-muted-foreground text-sm">
                 购买后自动获得私有 GitHub 仓库访问权限，包含所有配置和视频教程。
@@ -113,6 +107,12 @@ export default function PricingPage() {
               <h3 className="font-semibold mb-1">PDF 如何下载？</h3>
               <p className="text-muted-foreground text-sm">
                 购买后发送下载链接到您的邮箱，Dashboard 也可随时下载。
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-1">可以开发票吗？</h3>
+              <p className="text-muted-foreground text-sm">
+                支持开具电子发票，购买后联系客服处理。
               </p>
             </div>
           </div>
