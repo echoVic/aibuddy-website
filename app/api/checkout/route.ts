@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCheckoutSession } from '@/lib/stripe/client';
+import { createPayPalOrder } from '@/lib/paypal/client';
 
 export async function POST(request: NextRequest) {
   try {
-    const { productId, price } = await request.json();
+    const { productId, price, name } = await request.json();
 
-    const session = await createCheckoutSession(
+    const order = await createPayPalOrder(
       productId,
+      name,
       price,
-      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      `${process.env.NEXT_PUBLIC_APP_URL}/checkout/${productId}?canceled=true`
+      'USD'
     );
 
-    return NextResponse.json({ sessionId: session.id });
+    return NextResponse.json({ orderId: order.id });
   } catch (error) {
     console.error('Checkout error:', error);
     return NextResponse.json(

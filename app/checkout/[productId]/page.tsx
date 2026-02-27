@@ -1,7 +1,6 @@
 import { getProduct, products } from '@/lib/products';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import CheckoutForm from './CheckoutForm';
 
 export async function generateStaticParams() {

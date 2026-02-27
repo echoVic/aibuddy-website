@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import { Product } from '@/lib/products';
 import { Button } from '@/components/ui/button';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+import { Loader2 } from 'lucide-react';
 
 interface Props {
   product: Product;
@@ -24,24 +22,35 @@ export default function CheckoutForm({ product }: Props) {
         body: JSON.stringify({
           productId: product.id,
           price: product.price,
+          name: product.name,
         }),
       });
 
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-
-      if (stripe) {
-        await stripe.redirectToCheckout({ sessionId });
+      const { orderId, approvalUrl } = await response.json();
+      
+      if (approvalUrl) {
+        // Redirect to PayPal for payment
+        window.location.href = approvalUrl;
+      } else {
+        throw new Error('No approval URL received');
       }
     } catch (error) {
       console.error('Checkout error:', error);
+      alert('Payment initialization failed. Please try again.');
       setLoading(false);
     }
   };
 
   return (
     <Button onClick={handleCheckout} disabled={loading} className="w-full">
-      {loading ? 'Processing...' : 'Pay with Stripe'}
+      {loading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Processing...
+        </>
+      ) : (
+        `Pay $${product.price} with PayPal`
+      )}
     </Button>
   );
 }
