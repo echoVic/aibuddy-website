@@ -19,8 +19,8 @@ declare global {
           shape?: 'rect' | 'pill';
           label?: 'paypal' | 'checkout' | 'buynow' | 'pay' | 'installment';
         };
-        createOrder: () => Promise<string>;
-        onApprove: (data: { orderID: string }) => Promise<void>;
+        createOrder: (data: unknown, actions: { order: { create: (orderData: unknown) => Promise<string> } }) => Promise<string>;
+        onApprove: (data: { orderID: string }, actions: { order: { capture: () => Promise<unknown> } }) => Promise<void>;
         onError: (err: Error) => void;
         onCancel: () => void;
       }) => {
@@ -48,9 +48,7 @@ export default function CheckoutForm({ product }: Props) {
     // Create script element
     const script = document.createElement('script');
     script.id = 'paypal-script';
-    // Use the correct PayPal SDK URL with sandbox client-id
-    // The SDK automatically detects sandbox vs live based on the client-id
-    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture&commit=true`;
+    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
     script.async = true;
     
     script.onload = () => {
@@ -60,17 +58,12 @@ export default function CheckoutForm({ product }: Props) {
       }
     };
     
-    script.onerror = (e) => {
-      console.error('PayPal SDK failed to load:', e);
-      setError('Failed to load PayPal. Please check your internet connection and try again.');
+    script.onerror = () => {
+      setError('Failed to load PayPal. Please check your internet connection.');
       setLoading(false);
     };
 
     document.body.appendChild(script);
-
-    return () => {
-      // Cleanup not needed as we want to keep the script
-    };
   }, []);
 
   const renderPayPalButtons = () => {
@@ -88,42 +81,29 @@ export default function CheckoutForm({ product }: Props) {
           shape: 'rect',
           label: 'pay'
         },
-        createOrder: async () => {
-          try {
-            const response = await fetch('/api/checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                productId: product.id,
-                price: product.price,
-                name: product.name,
-              }),
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(errorData.error || 'Failed to create order');
-            }
-
-            const data = await response.json();
-            return data.orderId;
-          } catch (err) {
-            console.error('Create order error:', err);
-            throw err;
-          }
+        // Use client-side order creation (no backend needed)
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [
+              {
+                reference_id: product.id,
+                description: product.name,
+                amount: {
+                  currency_code: 'USD',
+                  value: product.price.toFixed(2),
+                },
+              },
+            ],
+          });
         },
-        onApprove: async (data) => {
+        onApprove: async (data, actions) => {
           try {
-            const response = await fetch('/api/capture', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ orderId: data.orderID }),
-            });
-
-            if (!response.ok) {
-              throw new Error('Payment capture failed');
-            }
-
+            const details = await actions.order.capture();
+            console.log('Payment captured:', details);
+            
+            // TODO: Send order info to your server for recording
+            // await fetch('/api/record-order', { ... });
+            
             window.location.href = '/dashboard?success=true';
           } catch (err) {
             console.error('Capture error:', err);
@@ -140,22 +120,21 @@ export default function CheckoutForm({ product }: Props) {
       });
 
       if (!buttons.isEligible()) {
-        setError('PayPal is not available for this browser. Please try a different payment method.');
+        setError('PayPal is not available for this browser.');
         setLoading(false);
         return;
       }
 
       buttons.render(paypalRef.current).then(() => {
-        console.log('PayPal buttons rendered successfully');
         setLoading(false);
       }).catch((err) => {
         console.error('Render error:', err);
-        setError('Failed to display PayPal buttons. Please refresh the page.');
+        setError('Failed to display PayPal buttons.');
         setLoading(false);
       });
     } catch (err) {
       console.error('Error creating buttons:', err);
-      setError('Failed to initialize PayPal. Please try again later.');
+      setError('Failed to initialize PayPal.');
       setLoading(false);
     }
   };
