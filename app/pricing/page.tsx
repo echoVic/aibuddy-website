@@ -1,9 +1,49 @@
+import type { Metadata } from 'next';
+import type { Metadata } from 'next';
+import Script from 'next/script';
 import { products } from '@/lib/products';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description: "从 $1 开始你的 AI 之旅。OpenClaw 指南、Agent 配置包、1v1 咨询服务。",
+};
+
+function generateProductSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: products.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Product',
+        name: product.name,
+        description: product.description,
+        offers: {
+          '@type': 'Offer',
+          price: product.price,
+          priceCurrency: product.currency.toUpperCase(),
+          availability: 'https://schema.org/InStock',
+          url: `https://aibuddy.ltd/checkout/${product.id}`,
+        },
+        ...(product.type === 'config' && {
+          category: 'SoftwareApplication',
+          applicationCategory: 'DeveloperApplication',
+        }),
+      },
+    })),
+  };
+}
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, BookOpen, Wrench, Users } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description: "AI Buddy 产品定价 - 从 $1 开始，按需升级。OpenClaw 指南、Agent 配置包、1v1 咨询服务。",
+};
 
 const iconMap = {
   pdf: BookOpen,
@@ -12,8 +52,16 @@ const iconMap = {
 };
 
 export default function PricingPage() {
+  const productSchema = generateProductSchema();
+
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Script
+        id="product-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto max-w-6xl px-6 py-4 flex justify-between items-center">
@@ -119,5 +167,6 @@ export default function PricingPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

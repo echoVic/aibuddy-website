@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: "免费指南",
+  description: "免费下载 OpenClaw 快速上手指南、Agent 配置模板。邮箱订阅即可获取。",
+};
 
 const guides = [
   {
