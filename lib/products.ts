@@ -28,7 +28,7 @@ export const products: Product[] = [
       '源码示例',
       '✨ 仅需 $1 超低门槛',
     ],
-    downloadUrl: '/guides/openclaw-quickstart.md',
+    // 购买后通过邮件发送 PDF，不在 public 目录
   },
   {
     id: 'openclaw-complete-guide',

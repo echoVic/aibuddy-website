@@ -18,6 +18,9 @@
 /out/
 /dist/
 
+# private content (not for public)
+/private/
+
 # production
 /build
 
