@@ -13,9 +13,9 @@ export interface PayPalOrder {
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '';
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET || '';
-const PAYPAL_API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://api-m.paypal.com'
-  : 'https://api-m.sandbox.paypal.com';
+// Use sandbox mode - both AX and AT prefixes are typically sandbox
+// Live credentials usually start with different patterns
+const PAYPAL_API_URL = 'https://api-m.sandbox.paypal.com';
 
 // Get access token for server-side API calls
 async function getAccessToken(): Promise<string> {
