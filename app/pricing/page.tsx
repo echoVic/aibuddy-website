@@ -18,30 +18,6 @@ const iconMap = {
   consultation: Users,
 };
 
-// 扩展 Product 类型
-type ProductWithStatus = typeof products[0] & { comingSoon?: boolean };
-
-// 添加 Coming Soon 产品
-const allProducts: ProductWithStatus[] = [
-  ...products,
-  {
-    id: 'openclaw-complete-guide',
-    name: 'OpenClaw 实战小册',
-    description: '深度教程 + 20+ 实战案例（正在写，敬请期待）',
-    price: 29,
-    currency: 'usd',
-    type: 'pdf',
-    comingSoon: true,
-    features: [
-      '完整架构解析',
-      '20+ 实战案例',
-      'Skill 开发进阶',
-      '私有 Discord 社群',
-      '终身更新',
-    ],
-  },
-];
-
 function generateProductSchema() {
   return {
     '@context': 'https://schema.org',
@@ -109,7 +85,7 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <section className="px-6 py-8 lg:px-8">
           <div className="mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {allProducts.map((product) => {
+            {products.map((product) => {
               const Icon = iconMap[product.type];
               const isPopular = product.id === 'agent-config-pack';
               const isLeadMagnet = product.price === 1 && !product.comingSoon;
