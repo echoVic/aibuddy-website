@@ -6,18 +6,18 @@ import { CheckCircle, BookOpen, Clock, Zap, Code, Sparkles, ArrowRight, Shield }
 import Link from 'next/link';
 
 const benefits = [
-  { icon: Clock, text: '30分钟快速上手' },
-  { icon: Zap, text: '10个即用场景' },
-  { icon: Code, text: '完整源码示例' },
-  { icon: Sparkles, text: '持续更新' },
+  { icon: Clock, text: '半小时就能跑起来' },
+  { icon: Zap, text: '10个拿来即用的场景' },
+  { icon: Code, text: '源码直接复制粘贴' },
+  { icon: Sparkles, text: '后续持续更新' },
 ];
 
 const features = [
-  '什么是 OpenClaw & 为什么选择它',
-  '5分钟安装配置步骤',
-  '10个即用场景（代码+配置）',
-  '如何写你的第一个 Skill',
-  'Discord 社群支持',
+  'OpenClaw 是啥，为啥选它而不是别的',
+  '5分钟装好，配置不踩坑',
+  '10个实用场景，代码和配置都给你',
+  '自己动手写第一个 Skill',
+  '有问题？Discord 群里喊一声',
 ];
 
 export default function LeadMagnetPage() {
@@ -44,11 +44,11 @@ export default function LeadMagnetPage() {
               </div>
               <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium mb-4">
                 <CheckCircle className="h-4 w-4" />
-                仅需 $1
+                只要 $1
               </div>
-              <CardTitle className="text-3xl">OpenClaw 快速上手指南</CardTitle>
+              <CardTitle className="text-3xl">OpenClaw 上手指南</CardTitle>
               <CardDescription className="text-lg">
-                从零到能用，只需 30 分钟
+                从零开始，半小时搞定
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -64,7 +64,7 @@ export default function LeadMagnetPage() {
 
               {/* Features */}
               <div className="bg-muted rounded-lg p-4">
-                <p className="font-medium text-foreground mb-3">指南内容包括：</p>
+                <p className="font-medium text-foreground mb-3">这份指南里有啥：</p>
                 <ul className="space-y-2">
                   {features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -79,7 +79,7 @@ export default function LeadMagnetPage() {
               <div className="space-y-4">
                 <Link href="/checkout/openclaw-quickstart">
                   <Button size="lg" className="w-full gap-2">
-                    立即购买 - $1
+                    花 $1 买一份
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -87,11 +87,11 @@ export default function LeadMagnetPage() {
                 <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Shield className="h-3 w-3" />
-                    <span>安全支付</span>
+                    <span>PayPal 安全支付</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CheckCircle className="h-3 w-3" />
-                    <span>即时交付</span>
+                    <span>付完立刻能下载</span>
                   </div>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export default function LeadMagnetPage() {
               {/* Social Proof */}
               <div className="text-center pt-4 border-t">
                 <p className="text-sm text-muted-foreground">
-                  已有 <span className="font-semibold text-foreground">500+</span> 开发者购买学习
+                  已经有 <span className="font-semibold text-foreground">500+</span> 人买了在看
                 </p>
               </div>
             </CardContent>
@@ -108,11 +108,11 @@ export default function LeadMagnetPage() {
           {/* Upsell */}
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-4">
-              想要更深入的教程？
+              看完想深入学？有完整的进阶版
             </p>
             <Link href="/pricing">
               <Button variant="outline">
-                查看完整指南 ($29) →
+                看看完整指南 ($29) →
               </Button>
             </Link>
           </div>
