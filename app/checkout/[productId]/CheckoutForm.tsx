@@ -45,10 +45,14 @@ export default function CheckoutForm({ product }: Props) {
       return;
     }
 
+    // Hardcoded PayPal Sandbox Client ID
+    // This is safe to expose as it's a public client ID
+    const PAYPAL_CLIENT_ID = 'AXTcKBw9PLoPwsLurZ2DRAmaDIfg-4TAwKgDNjClhY0iFGGtm1F3sIjIVTfz9P52l16GqWu1aPs24OeW';
+    
     // Create script element
     const script = document.createElement('script');
     script.id = 'paypal-script';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
     script.async = true;
     
     script.onload = () => {
