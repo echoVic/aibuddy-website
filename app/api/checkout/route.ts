@@ -13,11 +13,12 @@ export async function POST(request: NextRequest) {
     );
 
     // Find the approval URL from PayPal response
-    const approvalUrl = order.links?.find(link => link.rel === 'approve')?.href;
+    const approvalLink = order.links?.find(link => link.rel === 'approve');
+    const approvalUrl = approvalLink?.href;
 
     return NextResponse.json({ 
       orderId: order.id,
-      approvalUrl 
+      approvalUrl,
     });
   } catch (error) {
     console.error('Checkout error:', error);
