@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Product } from '@/lib/products';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -19,6 +19,7 @@ declare global {
         onCancel: () => void;
       }) => {
         render: (selector: string) => Promise<void>;
+        isEligible: () => boolean;
       };
     };
   }
@@ -28,11 +29,13 @@ export default function CheckoutForm({ product }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sdkLoaded, setSdkLoaded] = useState(false);
+  const renderedRef = useRef(false);
 
   useEffect(() => {
     // Load PayPal SDK
     const existingScript = document.getElementById('paypal-sdk');
-    if (existingScript) {
+    if (existingScript && window.paypal) {
+      console.log('PayPal SDK already loaded');
       setSdkLoaded(true);
       setLoading(false);
       return;
@@ -40,27 +43,30 @@ export default function CheckoutForm({ product }: Props) {
 
     const script = document.createElement('script');
     script.id = 'paypal-sdk';
-    // Use sandbox SDK since we're using sandbox credentials
     script.src = `https://www.sandbox.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
     script.async = true;
     script.onload = () => {
+      console.log('PayPal SDK loaded successfully');
       setSdkLoaded(true);
       setLoading(false);
     };
-    script.onerror = () => {
-      setError('Failed to load PayPal SDK');
+    script.onerror = (e) => {
+      console.error('PayPal SDK load error:', e);
+      setError('Failed to load PayPal SDK. Please refresh the page.');
       setLoading(false);
     };
     document.body.appendChild(script);
   }, []);
 
   useEffect(() => {
-    if (!sdkLoaded || !window.paypal) return;
+    if (!sdkLoaded || !window.paypal || renderedRef.current) return;
 
-    // Render PayPal buttons
-    window.paypal
-      .Buttons({
+    console.log('Attempting to render PayPal buttons...');
+    
+    try {
+      const buttons = window.paypal.Buttons({
         createOrder: async () => {
+          console.log('Creating order for product:', product.id);
           try {
             const response = await fetch('/api/checkout', {
               method: 'POST',
@@ -73,10 +79,13 @@ export default function CheckoutForm({ product }: Props) {
             });
 
             if (!response.ok) {
-              throw new Error('Failed to create order');
+              const errorText = await response.text();
+              console.error('Create order failed:', errorText);
+              throw new Error(`Failed to create order: ${errorText}`);
             }
 
             const { orderId } = await response.json();
+            console.log('Order created:', orderId);
             return orderId;
           } catch (err) {
             console.error('Create order error:', err);
@@ -84,8 +93,8 @@ export default function CheckoutForm({ product }: Props) {
           }
         },
         onApprove: async (data) => {
+          console.log('Payment approved:', data.orderID);
           try {
-            // Capture the payment
             const response = await fetch('/api/capture', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -96,7 +105,6 @@ export default function CheckoutForm({ product }: Props) {
               throw new Error('Payment capture failed');
             }
 
-            // Redirect to success page
             window.location.href = '/dashboard?success=true';
           } catch (err) {
             console.error('Capture error:', err);
@@ -104,14 +112,33 @@ export default function CheckoutForm({ product }: Props) {
           }
         },
         onError: (err) => {
-          console.error('PayPal error:', err);
-          setError('Payment error. Please try again.');
+          console.error('PayPal button error:', err);
+          setError('PayPal error: ' + err.message);
         },
         onCancel: () => {
-          console.log('Payment cancelled');
+          console.log('Payment cancelled by user');
         },
-      })
-      .render('#paypal-button-container');
+      });
+
+      // Check if buttons are eligible
+      if (!buttons.isEligible()) {
+        console.error('PayPal buttons are not eligible');
+        setError('PayPal is not available for this transaction. Please try a different payment method.');
+        return;
+      }
+
+      // Render buttons
+      buttons.render('#paypal-button-container').then(() => {
+        console.log('PayPal buttons rendered successfully');
+        renderedRef.current = true;
+      }).catch((err) => {
+        console.error('Failed to render PayPal buttons:', err);
+        setError('Failed to initialize PayPal. Please refresh the page.');
+      });
+    } catch (err) {
+      console.error('Error creating PayPal buttons:', err);
+      setError('PayPal initialization failed. Please try again.');
+    }
   }, [sdkLoaded, product]);
 
   if (loading) {
@@ -125,8 +152,8 @@ export default function CheckoutForm({ product }: Props) {
 
   if (error) {
     return (
-      <div className="text-center">
-        <p className="text-red-500 text-sm mb-2">{error}</p>
+      <div className="text-center space-y-2">
+        <p className="text-red-500 text-sm">{error}</p>
         <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
           Retry
         </Button>
@@ -136,7 +163,7 @@ export default function CheckoutForm({ product }: Props) {
 
   return (
     <div className="space-y-4">
-      <div id="paypal-button-container" className="min-h-[45px]" />
+      <div id="paypal-button-container" className="min-h-[45px] flex justify-center" />
       <p className="text-xs text-muted-foreground text-center">
         Secure payment powered by PayPal
       </p>
