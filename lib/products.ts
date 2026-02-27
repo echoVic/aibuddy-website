@@ -46,13 +46,15 @@ export const products: Product[] = [
       '终身更新',
     ],
   },
+  // TODO: Agent 配置包完成后取消 comingSoon
   {
     id: 'agent-config-pack',
     name: 'Agent 配置包',
-    description: '10个开箱即用的 Agent 配置 + Skill 模板',
+    description: '10个开箱即用的 Agent 配置 + Skill 模板（准备中，敬请期待）',
     price: 79,
     currency: 'usd',
     type: 'config',
+    comingSoon: true,
     features: [
       '10个实用场景配置',
       '完整 Skill 模板',
