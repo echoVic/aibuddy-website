@@ -176,7 +176,7 @@ export default function PricingPage() {
               <div>
                 <h3 className="font-semibold mb-1">能开发票吗？</h3>
                 <p className="text-muted-foreground text-sm">
-                  可以，电子发票，买完找客服就行。
+                  暂时开不了，金额太小手续麻烦。后面量大了我再想办法。
                 </p>
               </div>
               <div>
