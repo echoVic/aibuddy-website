@@ -18,6 +18,30 @@ const iconMap = {
   consultation: Users,
 };
 
+// 扩展 Product 类型
+type ProductWithStatus = typeof products[0] & { comingSoon?: boolean };
+
+// 添加 Coming Soon 产品
+const allProducts: ProductWithStatus[] = [
+  ...products,
+  {
+    id: 'openclaw-complete-guide',
+    name: 'OpenClaw 实战小册',
+    description: '深度教程 + 20+ 实战案例（正在写，敬请期待）',
+    price: 29,
+    currency: 'usd',
+    type: 'pdf',
+    comingSoon: true,
+    features: [
+      '完整架构解析',
+      '20+ 实战案例',
+      'Skill 开发进阶',
+      '私有 Discord 社群',
+      '终身更新',
+    ],
+  },
+];
+
 function generateProductSchema() {
   return {
     '@context': 'https://schema.org',
@@ -85,13 +109,14 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <section className="px-6 py-8 lg:px-8">
           <div className="mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => {
+            {allProducts.map((product) => {
               const Icon = iconMap[product.type];
               const isPopular = product.id === 'agent-config-pack';
-              const isLeadMagnet = product.price === 1;
+              const isLeadMagnet = product.price === 1 && !product.comingSoon;
+              const isComingSoon = product.comingSoon;
               
               return (
-                <Card key={product.id} className={`relative ${isPopular ? 'border-primary shadow-lg' : ''} ${isLeadMagnet ? 'border-green-500/30' : ''}`}>
+                <Card key={product.id} className={`relative ${isPopular ? 'border-primary shadow-lg' : ''} ${isLeadMagnet ? 'border-green-500/30' : ''} ${isComingSoon ? 'opacity-75' : ''}`}>
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <Badge>最受欢迎</Badge>
@@ -102,13 +127,24 @@ export default function PricingPage() {
                       <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400">先从这个开始</Badge>
                     </div>
                   )}
+                  {isComingSoon && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge variant="secondary" className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-400">Coming Soon</Badge>
+                    </div>
+                  )}
                   <CardHeader>
                     <Icon className={`h-8 w-8 mb-2 ${isPopular ? 'text-primary' : isLeadMagnet ? 'text-green-600' : 'text-muted-foreground'}`} />
                     <CardTitle>{product.name}</CardTitle>
                     <CardDescription>{product.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold">${product.price}</span>
-                      <span className="text-muted-foreground">{product.price === 0 ? '/免费' : product.price === 1 ? '/一次性' : '/一次性'}</span>
+                      {isComingSoon ? (
+                        <span className="text-2xl font-bold text-muted-foreground">敬请期待</span>
+                      ) : (
+                        <>
+                          <span className="text-4xl font-bold">${product.price}</span>
+                          <span className="text-muted-foreground">{product.price === 0 ? '/免费' : product.price === 1 ? '/一次性' : '/一次性'}</span>
+                        </>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -122,7 +158,11 @@ export default function PricingPage() {
                     </ul>
                   </CardContent>
                   <CardFooter>
-                    {product.type === 'consultation' ? (
+                    {isComingSoon ? (
+                      <Button className="w-full" disabled variant="outline">
+                        即将上线
+                      </Button>
+                    ) : product.type === 'consultation' ? (
                       <Link href="https://calendly.com/aibuddy/consultation" className="w-full">
                         <Button className="w-full">预约咨询</Button>
                       </Link>
