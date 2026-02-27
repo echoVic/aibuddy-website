@@ -19,6 +19,10 @@ const PAYPAL_API_URL = 'https://api-m.sandbox.paypal.com';
 
 // Get access token for server-side API calls
 async function getAccessToken(): Promise<string> {
+  console.log('Getting PayPal access token...');
+  console.log('Client ID exists:', !!PAYPAL_CLIENT_ID);
+  console.log('Secret exists:', !!PAYPAL_SECRET);
+  
   const response = await fetch(`${PAYPAL_API_URL}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
@@ -29,10 +33,13 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to get PayPal access token');
+    const errorText = await response.text();
+    console.error('PayPal auth error:', response.status, errorText);
+    throw new Error(`Failed to get PayPal access token: ${response.status} ${errorText}`);
   }
 
   const data = await response.json();
+  console.log('Access token obtained successfully');
   return data.access_token;
 }
 
@@ -43,42 +50,52 @@ export async function createPayPalOrder(
   price: number,
   currency: string = 'USD'
 ): Promise<PayPalOrder> {
-  const accessToken = await getAccessToken();
+  console.log('Creating PayPal order for:', productId, productName, price);
+  
+  try {
+    const accessToken = await getAccessToken();
 
-  const response = await fetch(`${PAYPAL_API_URL}/v2/checkout/orders`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      intent: 'CAPTURE',
-      purchase_units: [
-        {
-          reference_id: productId,
-          description: productName,
-          amount: {
-            currency_code: currency.toUpperCase(),
-            value: price.toFixed(2),
-          },
-        },
-      ],
-      application_context: {
-        brand_name: 'AI Buddy',
-        landing_page: 'BILLING',
-        user_action: 'PAY_NOW',
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+    const response = await fetch(`${PAYPAL_API_URL}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
       },
-    }),
-  });
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            reference_id: productId,
+            description: productName,
+            amount: {
+              currency_code: currency.toUpperCase(),
+              value: price.toFixed(2),
+            },
+          },
+        ],
+        application_context: {
+          brand_name: 'AI Buddy',
+          landing_page: 'BILLING',
+          user_action: 'PAY_NOW',
+          return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+          cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+        },
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`PayPal order creation failed: ${error}`);
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('PayPal order creation error:', response.status, error);
+      throw new Error(`PayPal order creation failed: ${response.status} ${error}`);
+    }
+
+    const data = await response.json();
+    console.log('Order created successfully:', data.id);
+    return data;
+  } catch (err) {
+    console.error('Exception in createPayPalOrder:', err);
+    throw err;
   }
-
-  return response.json();
 }
 
 // Capture payment after user approves

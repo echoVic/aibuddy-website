@@ -5,6 +5,13 @@ export async function POST(request: NextRequest) {
   try {
     const { productId, price, name } = await request.json();
 
+    console.log('Creating checkout for:', { productId, price, name });
+    console.log('Environment check:', {
+      hasClientId: !!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+      hasSecret: !!process.env.PAYPAL_SECRET,
+      appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    });
+
     const order = await createPayPalOrder(
       productId,
       name,
@@ -22,8 +29,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Checkout error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to create checkout session', details: errorMessage },
       { status: 500 }
     );
   }
