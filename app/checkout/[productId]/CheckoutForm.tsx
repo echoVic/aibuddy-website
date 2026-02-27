@@ -108,7 +108,7 @@ export default function CheckoutForm({ product }: Props) {
             // TODO: Send order info to your server for recording
             // await fetch('/api/record-order', { ... });
             
-            window.location.href = '/dashboard?success=true';
+            window.location.href = '/checkout/success';
           } catch (err) {
             console.error('Capture error:', err);
             setError('Payment failed. Please try again.');
