@@ -29,21 +29,22 @@ export const products: Product[] = [
     ],
     downloadUrl: '/guides/openclaw-quickstart.md',
   },
-  {
-    id: 'openclaw-complete-guide',
-    name: 'OpenClaw 完整指南',
-    description: '深度教程 + 实战案例 + 源码解析',
-    price: 29,
-    currency: 'usd',
-    type: 'pdf',
-    features: [
-      '完整架构解析',
-      '20+ 实战案例',
-      'Skill 开发进阶',
-      '私有 Discord 社群',
-      '终身更新',
-    ],
-  },
+  // TODO: 实战小册完成后取消注释
+  // {
+  //   id: 'openclaw-complete-guide',
+  //   name: 'OpenClaw 完整指南',
+  //   description: '深度教程 + 实战案例 + 源码解析',
+  //   price: 29,
+  //   currency: 'usd',
+  //   type: 'pdf',
+  //   features: [
+  //     '完整架构解析',
+  //     '20+ 实战案例',
+  //     'Skill 开发进阶',
+  //     '私有 Discord 社群',
+  //     '终身更新',
+  //   ],
+  // },
   {
     id: 'agent-config-pack',
     name: 'Agent 配置包',
