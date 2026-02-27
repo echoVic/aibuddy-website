@@ -40,7 +40,8 @@ export default function CheckoutForm({ product }: Props) {
 
     const script = document.createElement('script');
     script.id = 'paypal-sdk';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
+    // Use sandbox SDK since we're using sandbox credentials
+    script.src = `https://www.sandbox.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture`;
     script.async = true;
     script.onload = () => {
       setSdkLoaded(true);
