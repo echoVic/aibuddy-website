@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Check, ChevronDown, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,24 +8,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLanguage } from './language-provider';
 
 const languages = [
-  { code: 'zh', label: '中文', flag: '🇨🇳' },
-  { code: 'en', label: 'English', flag: '🇺🇸' },
+  { code: 'zh' as const, label: '中文', flag: '🇨🇳' },
+  { code: 'en' as const, label: 'English', flag: '🇺🇸' },
 ];
 
 export function LanguageSwitcher() {
-  const [currentLang, setCurrentLang] = useState('zh');
+  const { lang, setLang } = useLanguage();
 
-  const handleLanguageChange = (code: string) => {
-    setCurrentLang(code);
-    // Reload page with new locale
-    const url = new URL(window.location.href);
-    url.pathname = `/${code}${url.pathname.replace(/^\/(en|zh)/, '')}`;
-    window.location.href = url.toString();
+  const handleLanguageChange = (code: 'zh' | 'en') => {
+    setLang(code);
   };
 
-  const current = languages.find(l => l.code === currentLang);
+  const current = languages.find(l => l.code === lang);
 
   return (
     <DropdownMenu>
@@ -38,15 +34,15 @@ export function LanguageSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {languages.map((lang) => (
+        {languages.map((language) => (
           <DropdownMenuItem
-            key={lang.code}
-            onClick={() => handleLanguageChange(lang.code)}
+            key={language.code}
+            onClick={() => handleLanguageChange(language.code)}
             className="gap-2"
           >
-            <span>{lang.flag}</span>
-            <span>{lang.label}</span>
-            {currentLang === lang.code && <Check className="h-4 w-4 ml-auto" />}
+            <span>{language.flag}</span>
+            <span>{language.label}</span>
+            {lang === language.code && <Check className="h-4 w-4 ml-auto" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
