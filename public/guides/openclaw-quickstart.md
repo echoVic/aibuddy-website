@@ -1,214 +1,121 @@
 # OpenClaw 快速上手指南
 
+> 从零到能用，只需 30 分钟
+
+---
+
 ## 目录
 
 1. [什么是 OpenClaw](#什么是-openclaw)
 2. [5分钟安装配置](#5分钟安装配置)
-3. [核心概念](#核心概念)
-4. [10个即用场景](#10个即用场景)
-5. [进阶：写你的第一个 Skill](#进阶写你的第一个-skill)
-6. [资源索引](#资源索引)
+3. [10个即用场景](#10个即用场景)
+4. [进阶：写你的第一个 Skill](#进阶写你的第一个-skill)
 
 ---
 
 ## 什么是 OpenClaw
 
-OpenClaw 是一个开源的 AI Agent 框架，让你可以通过自然语言控制 AI 完成复杂任务。
+OpenClaw 是一个开源的 AI Agent 平台，让你可以：
 
-### 核心优势
+- 🤖 运行本地 AI Agent
+- 🔧 扩展自定义功能（Skills）
+- 🌐 连接多种消息渠道（Telegram、Discord、Slack 等）
+- 🔒 完全掌控自己的数据
 
-- **多渠道支持**: Telegram、WhatsApp、Discord、飞书、钉钉、微信
-- **工具扩展**: Skills 系统，无限扩展能力
-- **记忆系统**: 跨会话记忆，持续学习
-- **安全可控**: 本地部署，数据私有
+### 为什么选择 OpenClaw？
 
-### 适用场景
-
-- 个人 AI 助手
-- 客户服务自动化
-- 团队协作机器人
-- 自动化工作流
+| 特性 | OpenClaw | 其他平台 |
+|------|----------|----------|
+| 开源免费 | ✅ | ❌ |
+| 本地部署 | ✅ | ❌ |
+| 自定义 Skills | ✅ | 有限 |
+| 多模型支持 | ✅ | 有限 |
 
 ---
 
 ## 5分钟安装配置
 
-### 方式一：npm 安装（推荐）
+### 前提条件
+
+- Node.js 18+ 
+- Git
+- 一个 AI API Key（OpenAI、Anthropic 等）
+
+### 安装步骤
 
 ```bash
-# 安装 OpenClaw CLI
-npm install -g openclaw
+# 1. 克隆仓库
+git clone https://github.com/openclaw/openclaw.git
+cd openclaw
 
-# 初始化配置
-openclaw init
+# 2. 安装依赖
+npm install
 
-# 启动 Gateway
-openclaw gateway start
+# 3. 配置环境变量
+cp .env.example .env
+# 编辑 .env，添加你的 API Key
+
+# 4. 启动服务
+npm run dev
 ```
 
-### 方式二：Docker
-
-```bash
-# 拉取镜像
-docker pull openclaw/gateway:latest
-
-# 运行
-docker run -d \
-  --name openclaw \
-  -p 3000:3000 \
-  -v ~/.openclaw:/root/.openclaw \
-  openclaw/gateway:latest
-```
-
-### 连接 Telegram
-
-1. 在 BotFather 创建 Bot，获取 Token
-2. 运行配置命令：
-
-```bash
-openclaw configure --section telegram
-# 粘贴你的 Bot Token
-```
-
-3. 重启 Gateway：
-
-```bash
-openclaw gateway restart
-```
-
-完成！现在给你的 Bot 发消息试试。
-
----
-
-## 核心概念
-
-### Agent
-
-Agent 是你的 AI 助手实例，拥有：
-- **Memory**: 长期记忆
-- **Skills**: 技能扩展
-- **Tools**: 工具调用
-
-### Gateway
-
-Gateway 是消息路由中心，负责：
-- 连接各平台（Telegram、WhatsApp 等）
-- 消息转发
-- 会话管理
-
-### Skills
-
-Skills 是可插拔的能力模块：
-- 位于 `~/.openclaw/workspace/skills/`
-- 每个 Skill 包含 `SKILL.md` + 相关脚本
-
-### Tools
-
-Tools 是具体的操作能力：
-- 文件读写
-- 网页抓取
-- 命令执行
-- 消息发送
+完成！访问 http://localhost:3000 开始使用。
 
 ---
 
 ## 10个即用场景
 
-### 1. 个人日记助手
+### 1. 代码审查助手
 
-```markdown
-# 记忆系统配置
-每天晚上 10 点提醒写日记
-记录在 memory/YYYY-MM-DD.md
+```yaml
+# skills/code-review/config.yaml
+name: code-review
+description: 自动审查代码并提供建议
+triggers:
+  - type: file_upload
+    pattern: "*.js,*.ts,*.py"
+prompt: |
+  请审查以下代码，关注：
+  1. 潜在 bug
+  2. 性能问题
+  3. 可读性改进
 ```
 
-### 2. 代码审查机器人
+### 2. 文档生成器
 
-```markdown
-# Skill: code-review
-当收到 GitHub PR 链接时：
-1. 抓取 PR 内容
-2. 分析代码质量
-3. 给出改进建议
-```
+自动生成函数文档和 README。
 
-### 3. 每日新闻摘要
+### 3. 翻译助手
 
-```markdown
-# 定时任务
-每天早上 8 点：
-1. 抓取订阅的 RSS
-2. 生成摘要
-3. 发送到 Telegram
-```
+支持多语言实时翻译。
 
-### 4. 会议纪要整理
+### 4. 数据分析
 
-```markdown
-# 输入：会议录音/文字
-# 输出：结构化纪要
-- 参会人
-- 决议事项
-- 待办任务
-```
+自动分析 CSV/Excel 文件并生成报告。
 
-### 5. 学习卡片生成
+### 5. 邮件起草
 
-```markdown
-# 输入：知识点文本
-# 输出：Anki 卡片格式
-- 正面：问题
-- 背面：答案
-```
+根据要点自动生成专业邮件。
 
-### 6. 文档翻译助手
+### 6. 会议记录
 
-```markdown
-# 多语言翻译
-支持语言：中、英、日、韩
-保持 Markdown 格式
-```
+语音转文字 + 自动摘要。
 
-### 7. API 测试工具
+### 7. 学习规划
 
-```markdown
-# 输入：API 文档
-# 输出：测试用例
-- 正常请求
-- 边界条件
-- 错误处理
-```
+根据目标制定学习计划。
 
-### 8. 邮件草稿生成
+### 8. Bug 诊断
 
-```markdown
-# 输入：要点列表
-# 输出：正式邮件草稿
-- 问候语
-- 正文
-- 结尾
-```
+分析错误日志并提供解决方案。
 
-### 9. 数据分析助手
+### 9. 内容改写
 
-```markdown
-# 输入：CSV/Excel 文件
-# 输出：分析报告
-- 数据概览
-- 趋势分析
-- 可视化图表
-```
+优化文章结构和表达。
 
-### 10. 自动化部署
+### 10. 问答机器人
 
-```markdown
-# 监听 GitHub Webhook
-# 自动部署到服务器
-1. 拉取代码
-2. 运行测试
-3. 部署上线
-4. 发送通知
-```
+基于知识库的智能问答。
 
 ---
 
@@ -217,87 +124,57 @@ Tools 是具体的操作能力：
 ### Skill 结构
 
 ```
-my-skill/
-├── SKILL.md          # Skill 说明
-├── scripts/
-│   └── helper.sh     # 辅助脚本
-└── templates/
-    └── output.md     # 模板文件
+skills/my-skill/
+├── config.yaml      # 配置
+├── prompt.md        # 提示词
+└── tools.ts         # 工具函数（可选）
 ```
 
-### SKILL.md 示例
+### 示例：天气查询 Skill
 
+**config.yaml**
+```yaml
+name: weather-check
+description: 查询指定城市天气
+triggers:
+  - type: command
+    pattern: "/weather {city}"
+```
+
+**prompt.md**
 ```markdown
----
-name: daily-summary
-description: 每日工作总结生成器
----
-
-# Daily Summary Skill
-
-## 使用方式
-
-告诉我"生成今日总结"，我会：
-1. 回顾今天的对话
-2. 提取关键事项
-3. 生成结构化报告
-
-## 输出格式
-
-## 今日完成
-- [ ] 任务1
-- [ ] 任务2
-
-## 明日计划
-- [ ] 计划1
-- [ ] 计划2
+用户想查询 {{city}} 的天气。
+请调用 getWeather 工具获取信息，并以友好格式回复。
 ```
 
-### 安装 Skill
+**tools.ts**
+```typescript
+export async function getWeather(city: string) {
+  const res = await fetch(`https://api.weather.com/v1/current?city=${city}`);
+  return res.json();
+}
+```
+
+### 部署 Skill
 
 ```bash
-# 放入 skills 目录
-cp -r my-skill ~/.openclaw/workspace/skills/
+# 复制到 skills 目录
+cp -r my-skill skills/
 
-# 重启生效
-openclaw gateway restart
+# 重启服务
+npm run dev
 ```
 
----
-
-## 资源索引
-
-### 官方资源
-
-- **文档**: https://docs.openclaw.ai
-- **GitHub**: https://github.com/openclaw/openclaw
-- **社区**: https://discord.gg/clawd
-- **技能市场**: https://clawhub.com
-
-### 推荐 Skills
-
-| Skill | 用途 |
-|-------|------|
-| weather | 天气查询 |
-| feishu-doc | 飞书文档操作 |
-| tmux | 远程终端控制 |
-| agent-browser | 浏览器自动化 |
-
-### 视频教程
-
-- [OpenClaw 入门教程](https://youtube.com/@openclaw)
-- [Skill 开发实战](https://youtube.com/@openclaw)
+完成！现在可以使用 `/weather 北京` 测试了。
 
 ---
 
 ## 下一步
 
-1. 加入 [Discord 社区](https://discord.gg/clawd) 获取帮助
-2. 浏览 [ClawHub](https://clawhub.com) 发现更多 Skills
-3. 购买 [OpenClaw 完整指南](/pricing) 深入学习
+- 📚 [完整文档](https://docs.openclaw.ai)
+- 💬 [加入 Discord](https://discord.gg/clawd)
+- ⭐ [GitHub Star](https://github.com/openclaw/openclaw)
 
 ---
 
-*AI Buddy - 让 AI 成为你的超能力*
-
-© 2025 AI Buddy. All rights reserved.
+*本指南由 AI Buddy 出品，持续更新中...*

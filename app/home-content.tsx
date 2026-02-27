@@ -61,9 +61,9 @@ export default function HomeContent() {
   };
 
   const products = [
-    { key: 'starter', icon: Zap, color: 'yellow' },
-    { key: 'guides', icon: BookOpen, color: 'blue' },
-    { key: 'consultation', icon: Users, color: 'green' },
+    { key: 'starter', icon: Zap, color: 'yellow', href: '/guides/lead-magnet', free: true },
+    { key: 'guides', icon: BookOpen, color: 'blue', href: '/pricing' },
+    { key: 'consultation', icon: Users, color: 'green', href: '/pricing' },
   ];
 
   const trustItems = getT('trust') as Record<string, string>;
@@ -158,26 +158,40 @@ export default function HomeContent() {
               const features = productData.features as string[];
               
               return (
-                <Card key={product.key} className="group relative overflow-hidden border-2 border-transparent hover:border-primary/20 transition-all duration-300">
-                  <div className={`absolute inset-0 bg-gradient-to-br from-${product.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity`} />
-                  <CardHeader className="relative">
-                    <div className={`w-12 h-12 rounded-xl bg-${product.color}-500/10 flex items-center justify-center mb-4`}>
-                      <product.icon className={`h-6 w-6 text-${product.color}-500`} />
-                    </div>
-                    <CardTitle className="text-2xl">{productData.title as string}</CardTitle>
-                    <CardDescription className="text-lg font-semibold text-primary">{productData.price as string}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="relative">
-                    <ul className="space-y-3 text-sm text-muted-foreground">
-                      {features?.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                <Link key={product.key} href={product.href || '/pricing'} className="block">
+                  <Card className={`group relative overflow-hidden border-2 ${product.free ? 'border-green-500/30' : 'border-transparent'} hover:border-primary/20 transition-all duration-300 h-full cursor-pointer`}>
+                    {product.free && (
+                      <div className="absolute top-4 right-4">
+                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                          免费
+                        </Badge>
+                      </div>
+                    )}
+                    <div className={`absolute inset-0 bg-gradient-to-br from-${product.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity`} />
+                    <CardHeader className="relative">
+                      <div className={`w-12 h-12 rounded-xl bg-${product.color}-500/10 flex items-center justify-center mb-4`}>
+                        <product.icon className={`h-6 w-6 text-${product.color}-500`} />
+                      </div>
+                      <CardTitle className="text-2xl">{productData.title as string}</CardTitle>
+                      <CardDescription className="text-lg font-semibold text-primary">{productData.price as string}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="relative">
+                      <ul className="space-y-3 text-sm text-muted-foreground">
+                        {features?.map((feature, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-4 pt-4 border-t">
+                        <span className={`text-sm font-medium ${product.free ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
+                          {product.free ? '立即免费获取 →' : '了解更多 →'}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               );
             })}
           </div>

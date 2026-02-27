@@ -14,9 +14,9 @@ export interface Product {
 export const products: Product[] = [
   {
     id: 'openclaw-quickstart',
-    name: 'OpenClaw Quick Start Guide',
-    description: '30分钟从零到能用，PDF 指南 + 代码示例',
-    price: 1,
+    name: 'OpenClaw 快速上手指南',
+    description: '30分钟从零到能用，PDF 指南 + 代码示例（免费）',
+    price: 0,
     currency: 'usd',
     type: 'pdf',
     features: [
@@ -25,8 +25,9 @@ export const products: Product[] = [
       '10个即用场景',
       '进阶：写你的第一个 Skill',
       '源码示例',
+      '✨ 免费 - 邮箱订阅即可下载',
     ],
-    downloadUrl: '/guides/openclaw-quickstart.pdf',
+    downloadUrl: '/guides/openclaw-quickstart.md',
   },
   {
     id: 'openclaw-complete-guide',
