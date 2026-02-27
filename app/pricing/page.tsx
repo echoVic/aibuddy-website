@@ -61,10 +61,10 @@ export default function PricingPage() {
           <div className="mx-auto max-w-6xl px-6 py-4 flex justify-between items-center">
             <Link href="/" className="text-xl font-bold">AI Buddy</Link>
             <nav className="flex gap-6 items-center">
-              <Link href="/pricing" className="text-sm text-foreground font-medium">Pricing</Link>
-              <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">Dashboard</Link>
+              <Link href="/pricing" className="text-sm text-foreground font-medium">定价</Link>
+              <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">控制台</Link>
               <Link href="/pricing">
-                <Button size="sm">Get Started</Button>
+                <Button size="sm">开始使用</Button>
               </Link>
             </nav>
           </div>
@@ -74,10 +74,10 @@ export default function PricingPage() {
         <section className="px-6 py-12 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">
-              Simple, transparent pricing
+              简单透明的定价
             </h1>
             <p className="text-lg text-muted-foreground">
-              从 $1 开始，按需升级
+              花 $1 先试试，觉得值再升级
             </p>
           </div>
         </section>
@@ -88,28 +88,34 @@ export default function PricingPage() {
             {products.map((product) => {
               const Icon = iconMap[product.type];
               const isPopular = product.id === 'agent-config-pack';
+              const isLeadMagnet = product.price === 1;
               
               return (
-                <Card key={product.id} className={`relative ${isPopular ? 'border-primary shadow-lg' : ''}`}>
+                <Card key={product.id} className={`relative ${isPopular ? 'border-primary shadow-lg' : ''} ${isLeadMagnet ? 'border-green-500/30' : ''}`}>
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge>Most Popular</Badge>
+                      <Badge>最受欢迎</Badge>
+                    </div>
+                  )}
+                  {isLeadMagnet && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400">先从这个开始</Badge>
                     </div>
                   )}
                   <CardHeader>
-                    <Icon className={`h-8 w-8 mb-2 ${isPopular ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Icon className={`h-8 w-8 mb-2 ${isPopular ? 'text-primary' : isLeadMagnet ? 'text-green-600' : 'text-muted-foreground'}`} />
                     <CardTitle>{product.name}</CardTitle>
                     <CardDescription>{product.description}</CardDescription>
                     <div className="mt-4">
                       <span className="text-4xl font-bold">${product.price}</span>
-                      <span className="text-muted-foreground">/one-time</span>
+                      <span className="text-muted-foreground">{product.price === 0 ? '/免费' : product.price === 1 ? '/一次性' : '/一次性'}</span>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
                       {product.features.map((feature, i) => (
                         <li key={i} className="flex items-center gap-2 text-sm">
-                          <Check className="h-4 w-4 text-green-500" />
+                          <Check className="h-4 w-4 text-green-500 shrink-0" />
                           {feature}
                         </li>
                       ))}
@@ -118,12 +124,12 @@ export default function PricingPage() {
                   <CardFooter>
                     {product.type === 'consultation' ? (
                       <Link href="https://calendly.com/aibuddy/consultation" className="w-full">
-                        <Button className="w-full">Book Now</Button>
+                        <Button className="w-full">预约咨询</Button>
                       </Link>
                     ) : (
-                      <Link href={`/checkout/${product.id}`} className="w-full">
-                        <Button className="w-full">
-                          {isPopular ? 'Get Started' : 'Purchase'}
+                      <Link href={isLeadMagnet ? '/guides/lead-magnet' : `/checkout/${product.id}`} className="w-full">
+                        <Button className="w-full" variant={isLeadMagnet ? 'default' : 'outline'}>
+                          {isLeadMagnet ? '花 $1 试试 →' : isPopular ? '立即购买' : '购买'}
                         </Button>
                       </Link>
                     )}
@@ -137,24 +143,30 @@ export default function PricingPage() {
         {/* FAQ */}
         <section className="px-6 py-16 lg:px-8 bg-muted/50">
           <div className="mx-auto max-w-3xl">
-            <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+            <h2 className="text-2xl font-bold text-center mb-8">常见问题</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-1">配置包如何交付？</h3>
+                <h3 className="font-semibold mb-1">配置包怎么给我？</h3>
                 <p className="text-muted-foreground text-sm">
-                  购买后自动获得私有 GitHub 仓库访问权限，包含所有配置和视频教程。
+                  买完之后自动给你开 GitHub 仓库权限，里面代码和视频都有。
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">PDF 如何下载？</h3>
+                <h3 className="font-semibold mb-1">PDF 在哪下载？</h3>
                 <p className="text-muted-foreground text-sm">
-                  购买后发送下载链接到您的邮箱，Dashboard 也可随时下载。
+                  发你邮箱，同时在 Dashboard 里也能随时下。
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">可以开发票吗？</h3>
+                <h3 className="font-semibold mb-1">能开发票吗？</h3>
                 <p className="text-muted-foreground text-sm">
-                  支持开具电子发票，购买后联系客服处理。
+                  可以，电子发票，买完找客服就行。
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">$1 的指南和 $29 的有啥区别？</h3>
+                <p className="text-muted-foreground text-sm">
+                  $1 是入门版，帮你快速跑起来；$29 是完整版，有深度教程、更多案例，还有社群支持。
                 </p>
               </div>
             </div>
