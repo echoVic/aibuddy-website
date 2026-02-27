@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Product } from '@/lib/products';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -9,45 +9,153 @@ interface Props {
   product: Product;
 }
 
-export default function CheckoutForm({ product }: Props) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+declare global {
+  interface Window {
+    paypal?: {
+      Buttons: (config: {
+        style?: {
+          layout?: 'vertical' | 'horizontal';
+          color?: 'gold' | 'blue' | 'silver' | 'white' | 'black';
+          shape?: 'rect' | 'pill';
+          label?: 'paypal' | 'checkout' | 'buynow' | 'pay' | 'installment';
+        };
+        createOrder: () => Promise<string>;
+        onApprove: (data: { orderID: string }) => Promise<void>;
+        onError: (err: Error) => void;
+        onCancel: () => void;
+      }) => {
+        render: (selector: string | HTMLElement) => Promise<void>;
+        isEligible: () => boolean;
+      };
+    };
+  }
+}
 
-  const handleCheckout = async () => {
-    setLoading(true);
-    setError('');
+export default function CheckoutForm({ product }: Props) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const paypalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Check if script already exists
+    if (document.getElementById('paypal-script')) {
+      if (window.paypal && paypalRef.current) {
+        renderPayPalButtons();
+      }
+      return;
+    }
+
+    // Create script element
+    const script = document.createElement('script');
+    script.id = 'paypal-script';
+    // Use the correct PayPal SDK URL with sandbox client-id
+    // The SDK automatically detects sandbox vs live based on the client-id
+    script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&intent=capture&commit=true`;
+    script.async = true;
+    
+    script.onload = () => {
+      console.log('PayPal SDK loaded');
+      if (paypalRef.current) {
+        renderPayPalButtons();
+      }
+    };
+    
+    script.onerror = (e) => {
+      console.error('PayPal SDK failed to load:', e);
+      setError('Failed to load PayPal. Please check your internet connection and try again.');
+      setLoading(false);
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup not needed as we want to keep the script
+    };
+  }, []);
+
+  const renderPayPalButtons = () => {
+    if (!window.paypal || !paypalRef.current) {
+      setError('PayPal is not available');
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: product.id,
-          price: product.price,
-          name: product.name,
-        }),
+      const buttons = window.paypal.Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+          label: 'pay'
+        },
+        createOrder: async () => {
+          try {
+            const response = await fetch('/api/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                productId: product.id,
+                price: product.price,
+                name: product.name,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.error || 'Failed to create order');
+            }
+
+            const data = await response.json();
+            return data.orderId;
+          } catch (err) {
+            console.error('Create order error:', err);
+            throw err;
+          }
+        },
+        onApprove: async (data) => {
+          try {
+            const response = await fetch('/api/capture', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId: data.orderID }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Payment capture failed');
+            }
+
+            window.location.href = '/dashboard?success=true';
+          } catch (err) {
+            console.error('Capture error:', err);
+            setError('Payment failed. Please try again.');
+          }
+        },
+        onError: (err) => {
+          console.error('PayPal error:', err);
+          setError('An error occurred with PayPal. Please try again.');
+        },
+        onCancel: () => {
+          console.log('Payment cancelled');
+        },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create checkout');
+      if (!buttons.isEligible()) {
+        setError('PayPal is not available for this browser. Please try a different payment method.');
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      
-      // Check for approval URL in PayPal response
-      if (data.approvalUrl) {
-        window.location.href = data.approvalUrl;
-      } else if (data.orderId) {
-        // If no approvalUrl, construct one manually
-        const paypalUrl = `https://www.sandbox.paypal.com/checkoutnow?token=${data.orderId}`;
-        window.location.href = paypalUrl;
-      } else {
-        throw new Error('Invalid response from server');
-      }
+      buttons.render(paypalRef.current).then(() => {
+        console.log('PayPal buttons rendered successfully');
+        setLoading(false);
+      }).catch((err) => {
+        console.error('Render error:', err);
+        setError('Failed to display PayPal buttons. Please refresh the page.');
+        setLoading(false);
+      });
     } catch (err) {
-      console.error('Checkout error:', err);
-      setError(err instanceof Error ? err.message : 'Payment initialization failed');
+      console.error('Error creating buttons:', err);
+      setError('Failed to initialize PayPal. Please try again later.');
       setLoading(false);
     }
   };
@@ -56,8 +164,8 @@ export default function CheckoutForm({ product }: Props) {
     return (
       <div className="space-y-2">
         <p className="text-red-500 text-sm text-center">{error}</p>
-        <Button onClick={() => setError('')} variant="outline" className="w-full">
-          Try Again
+        <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
+          Retry
         </Button>
       </div>
     );
@@ -65,29 +173,21 @@ export default function CheckoutForm({ product }: Props) {
 
   return (
     <div className="space-y-4">
-      <Button 
-        onClick={handleCheckout} 
-        disabled={loading} 
-        className="w-full bg-[#0070BA] hover:bg-[#003087]"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Connecting to PayPal...
-          </>
-        ) : (
-          <>
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.77.77 0 0 1 .757-.629h6.724c2.838 0 5.098.835 5.898 2.507.447.913.558 1.933.332 3.036-.335 1.628-1.124 2.917-2.354 3.848-1.255.95-2.858 1.431-4.768 1.431h-1.92a.77.77 0 0 0-.756.629l-.781 5.805z"/>
-              <path d="M20.067 8.94c-.013.092-.028.185-.045.28-.32 1.867-1.364 3.465-2.936 4.503-.87.574-1.88.897-2.96.954l-.15.008h-2.37a.64.64 0 0 0-.632.535l-.747 4.863-.214 1.39a.346.346 0 0 0 .342.398h4.17a.578.578 0 0 0 .57-.482l.041-.213.804-5.18.052-.285a.578.578 0 0 1 .571-.482h.36c2.333 0 4.158-.947 4.693-3.48.223-1.04.109-1.905-.42-2.556z"/>
-            </svg>
-            Pay ${product.price} with PayPal
-          </>
-        )}
-      </Button>
-      <p className="text-xs text-muted-foreground text-center">
-        You will be redirected to PayPal to complete your payment
-      </p>
+      {loading && (
+        <Button disabled className="w-full">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Loading PayPal...
+        </Button>
+      )}
+      <div 
+        ref={paypalRef} 
+        className={`min-h-[45px] ${loading ? 'hidden' : ''}`}
+      />
+      {!loading && (
+        <p className="text-xs text-muted-foreground text-center">
+          Secure payment powered by PayPal
+        </p>
+      )}
     </div>
   );
 }
