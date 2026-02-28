@@ -1,8 +1,6 @@
-name = "aibuddy-download"
-main = "r2-download.js"
-compatibility_date = "2024-01-01"
+[account]
+account_id = your_account_id_here
 
-# R2 Bucket binding
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "aibuddy-guides"
+# This is your Global API Key (not recommended for production)
+# Consider using API Token instead
+token = "5499ec910c0cfe7b11e43bd1304cff19deb47"
