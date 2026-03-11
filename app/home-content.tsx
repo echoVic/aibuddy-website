@@ -35,6 +35,7 @@ export default function HomeContent() {
     products: {
       title: '选择适合你的产品',
       subtitle: '从入门到精通，每一步都有对应的产品',
+      aiStarter: { title: 'AI Starter Pack', price: '$0.1', features: ['AI 工具快速入门指南', '精选 Prompt 模板 x10', '开箱即用场景示例', '超低门槛体验'] },
       starter: { title: '入门版', price: '$1', features: ['OpenClaw Quick Start PDF', '10个实用场景', '源码示例', '低门槛体验'] },
       guides: { title: '实战小册', price: '$29 - $79', features: ['《OpenClaw 完整指南》', 'MCP 开发完全指南', '20+ 实战案例', '私有 Discord 社群'] },
       consultation: { title: '1v1 服务', price: '$299起', features: ['环境搭建咨询', '工作流定制设计', '代码 Review', '企业内训（远程）'] }
@@ -61,6 +62,7 @@ export default function HomeContent() {
   };
 
   const products = [
+    { key: 'aiStarter', icon: Zap, color: 'purple', href: '/checkout/ai-starter-pack', badge: '$0.1' },
     { key: 'starter', icon: Zap, color: 'yellow', href: '/guides/lead-magnet', free: true },
     { key: 'guides', icon: BookOpen, color: 'blue', href: '/pricing' },
     { key: 'consultation', icon: Users, color: 'green', href: '/pricing' },
