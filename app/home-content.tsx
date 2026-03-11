@@ -63,7 +63,7 @@ export default function HomeContent() {
 
   const products = [
     { key: 'aiStarter', icon: Zap, color: 'purple', href: '/checkout/ai-starter-pack', badge: '$0.1' },
-    { key: 'starter', icon: Zap, color: 'yellow', href: '/guides/lead-magnet', free: true },
+    { key: 'starter', icon: Zap, color: 'yellow', href: '/checkout/openclaw-quickstart' },
     { key: 'guides', icon: BookOpen, color: 'blue', href: '/pricing' },
     { key: 'consultation', icon: Users, color: 'green', href: '/pricing' },
   ];
