@@ -187,8 +187,8 @@ export default function HomeContent() {
                         ))}
                       </ul>
                       <div className="mt-4 pt-4 border-t">
-                        <span className={`text-sm font-medium ${product.free ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
-                          {product.free ? '立即免费获取 →' : '了解更多 →'}
+                        <span className={`text-sm font-medium ${'badge' in product ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
+                          {'badge' in product ? '立即免费获取 →' : '了解更多 →'}
                         </span>
                       </div>
                     </CardContent>
