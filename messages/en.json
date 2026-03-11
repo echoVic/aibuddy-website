@@ -1,0 +1,63 @@
+{
+  "nav": {
+    "pricing": "Pricing",
+    "dashboard": "Dashboard",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "Start your AI journey from $1",
+    "title": "AI Buddy",
+    "description": "Practical AI tutorials, ready-to-use Agent configurations, OpenClaw workflow templates. No BS, just get started.",
+    "browseProducts": "Browse Products",
+    "viewPricing": "View Pricing"
+  },
+  "products": {
+    "title": "Choose Your Product",
+    "subtitle": "From beginner to expert, we have you covered",
+    "starter": {
+      "title": "Starter",
+      "price": "$1",
+      "features": [
+        "OpenClaw Quick Start PDF",
+        "10 practical scenarios",
+        "Source code examples",
+        "Low barrier to entry"
+      ]
+    },
+    "guides": {
+      "title": "Complete Guides",
+      "price": "$29 - $79",
+      "features": [
+        "OpenClaw Complete Guide",
+        "MCP Development Guide",
+        "20+ real-world cases",
+        "Private Discord community"
+      ]
+    },
+    "consultation": {
+      "title": "1-on-1 Service",
+      "price": "From $299",
+      "features": [
+        "Environment setup consulting",
+        "Custom workflow design",
+        "Code review",
+        "Enterprise training (remote)"
+      ]
+    }
+  },
+  "trust": {
+    "lifetimeUpdates": "Lifetime updates",
+    "communitySupport": "Discord community support",
+    "instantAccess": "Instant access"
+  },
+  "cta": {
+    "title": "Ready to level up?",
+    "description": "Start from $1 and unlock AI superpowers step by step.",
+    "button": "View Pricing"
+  },
+  "footer": {
+    "copyright": "© 2025 AI Buddy. Focused on AI practice.",
+    "pricing": "Pricing",
+    "github": "GitHub"
+  }
+}
