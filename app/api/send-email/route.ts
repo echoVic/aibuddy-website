@@ -1,7 +1,5 @@
-import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendEmail } from '@/lib/email/client';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,14 +12,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const data = await resend.emails.send({
-      from: 'AI Buddy <noreply@aibuddy.ltd>',
-      to,
-      subject,
-      html,
-    });
+    const result = await sendEmail({ to, subject, html });
 
-    return NextResponse.json(data);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Failed to send email', details: result.error },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, id: result.id });
   } catch (error) {
     console.error('Email send error:', error);
     return NextResponse.json(
