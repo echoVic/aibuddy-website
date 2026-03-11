@@ -43,6 +43,16 @@
         "代码 Review",
         "企业内训（远程）"
       ]
+    },
+    "aiStarter": {
+      "title": "AI Starter Pack",
+      "price": "$0.1",
+      "features": [
+        "AI 工具快速入门指南",
+        "精选 Prompt 模板 x10",
+        "开箱即用场景示例",
+        "超低门槛体验"
+      ]
     }
   },
   "trust": {

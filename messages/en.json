@@ -43,6 +43,16 @@
         "Code review",
         "Enterprise training (remote)"
       ]
+    },
+    "aiStarter": {
+      "title": "AI Starter Pack",
+      "price": "$0.1",
+      "features": [
+        "Quick AI tool guide",
+        "10 ready-to-use Prompt templates",
+        "Ready-to-use examples",
+        "Ultra low barrier entry"
+      ]
     }
   },
   "trust": {
