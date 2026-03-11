@@ -161,11 +161,11 @@ export default function HomeContent() {
               
               return (
                 <Link key={product.key} href={product.href || '/pricing'} className="block">
-                  <Card className={`group relative overflow-hidden border-2 ${product.free ? 'border-green-500/30' : 'border-transparent'} hover:border-primary/20 transition-all duration-300 h-full cursor-pointer`}>
-                    {product.free && (
+                  <Card className={`group relative overflow-hidden border-2 ${'badge' in product ? 'border-green-500/30' : 'border-transparent'} hover:border-primary/20 transition-all duration-300 h-full cursor-pointer`}>
+                    {'badge' in product && (
                       <div className="absolute top-4 right-4">
                         <Badge variant="secondary" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
-                          免费
+                          {'badge' in product ? product.badge : ''}
                         </Badge>
                       </div>
                     )}
