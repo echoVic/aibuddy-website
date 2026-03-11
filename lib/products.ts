@@ -14,6 +14,20 @@ export interface Product {
 
 export const products: Product[] = [
   {
+    id: 'ai-starter-pack',
+    name: 'AI Starter Pack',
+    description: '1分钟体验 AI 助手，$0.1 超低门槛即可解锁入门资源包',
+    price: 0.1,
+    currency: 'usd',
+    type: 'pdf',
+    features: [
+      'AI 工具快速入门指南',
+      '精选 Prompt 模板 x10',
+      '开箱即用场景示例',
+      '✨ 仅需 $0.1 超低体验价',
+    ],
+  },
+  {
     id: 'openclaw-quickstart',
     name: 'OpenClaw 快速上手指南',
     description: '30分钟从零到能用，PDF 指南 + 代码示例',
