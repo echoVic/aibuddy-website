@@ -86,6 +86,7 @@ export default function CheckoutForm({ product }: Props) {
         // Use client-side order creation (no backend needed)
         createOrder: (data, actions) => {
           return actions.order.create({
+            intent: 'CAPTURE',
             purchase_units: [
               {
                 reference_id: product.id,
@@ -96,6 +97,13 @@ export default function CheckoutForm({ product }: Props) {
                 },
               },
             ],
+            application_context: {
+              brand_name: 'AI Buddy',
+              landing_page: 'NO_PREFERENCE',
+              user_action: 'PAY_NOW',
+              return_url: `${window.location.origin}/checkout/success`,
+              cancel_url: `${window.location.origin}/checkout/${product.id}`,
+            },
           });
         },
         onApprove: async (data, actions) => {
